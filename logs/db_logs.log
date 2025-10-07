@@ -1,0 +1,22 @@
+[2025-10-07 23:02:29,177] DEBUG django.db.backends: (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+[2025-10-07 23:02:29,177] DEBUG django.db.backends: (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+[2025-10-07 23:02:35,597] DEBUG django.db.backends: (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+[2025-10-07 23:02:35,597] DEBUG django.db.backends: (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+[2025-10-07 23:10:44,067] DEBUG django.db.backends: (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+[2025-10-07 23:10:44,071] DEBUG django.db.backends: (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+[2025-10-07 23:13:42,767] DEBUG django.db.backends: (0.000) 
+            SELECT name, type FROM sqlite_master
+            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'
+            ORDER BY name; args=None; alias=default
+[2025-10-07 23:13:42,767] DEBUG django.db.backends: (0.000) SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"; args=(); alias=default
+[2025-10-07 23:13:55,567] DEBUG django.db.backends: (0.000) SELECT "task_manager_task"."id", "task_manager_task"."title", "task_manager_task"."description", "task_manager_task"."status", "task_manager_task"."deadline", "task_manager_task"."created_at" FROM "task_manager_task" ORDER BY "task_manager_task"."created_at" DESC LIMIT 7; args=(); alias=default
+[2025-10-07 23:14:25,295] DEBUG django.db.backends: (0.000) SELECT "task_manager_task"."id", "task_manager_task"."title", "task_manager_task"."description", "task_manager_task"."status", "task_manager_task"."deadline", "task_manager_task"."created_at" FROM "task_manager_task" ORDER BY "task_manager_task"."created_at" DESC LIMIT 7; args=(); alias=default

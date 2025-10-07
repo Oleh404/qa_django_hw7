@@ -3,25 +3,19 @@ from django.db.models import Count, Q
 from django.db.models.functions import ExtractIsoWeekDay
 import django_filters.rest_framework as filters
 
-from rest_framework.generics import (
-    ListCreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView, ListCreateAPIView
-)
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
-    # noqa
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.decorators import action
 
 from .models import Task, SubTask, Category, Status
 from .serializers import (
     TaskCreateSerializer, TaskListSerializer, TaskDetailSerializer,
-    SubTaskCreateSerializer, CategoryCreateSerializer, CategorySerializer
+    SubTaskCreateSerializer, CategorySerializer
 )
-
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 class TaskFilter(filters.FilterSet):
     deadline_after = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
@@ -38,10 +32,6 @@ class SubTaskFilter(filters.FilterSet):
     class Meta:
         model = SubTask
         fields = ["status"]
-
-class SubTaskPagination(PageNumberPagination):
-    page_size = 5
-    max_page_size = 5
 
 class TaskListCreateView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -96,7 +86,6 @@ class TaskStatsView(APIView):
 
 class SubTaskListCreateView(ListCreateAPIView):
     serializer_class = SubTaskCreateSerializer
-    pagination_class = SubTaskPagination
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = SubTaskFilter
