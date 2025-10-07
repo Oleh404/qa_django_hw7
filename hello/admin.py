@@ -41,5 +41,9 @@ class SubTaskAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", "is_deleted", "deleted_at")
+    list_filter = ("is_deleted",)
     search_fields = ("name",)
+
+    def get_queryset(self, request):
+        return Category.all_objects.all()

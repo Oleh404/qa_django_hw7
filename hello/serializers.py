@@ -79,3 +79,19 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = ["id", "title", "description", "status", "deadline", "created_at", "categories"]
         read_only_fields = ["id", "created_at"]
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ("id", "name", "is_deleted", "deleted_at")
+        read_only_fields = ("is_deleted", "deleted_at")
+
+    def validate_name(self, value):
+        value = value.strip()
+        qs = Category.all_objects.filter(name__iexact=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.filter(is_deleted=False).exists():
+            raise serializers.ValidationError("Category with this name already exists.")
+        return value

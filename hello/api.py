@@ -16,8 +16,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Task, SubTask, Category, Status
 from .serializers import (
     TaskCreateSerializer, TaskListSerializer, TaskDetailSerializer,
-    SubTaskCreateSerializer, CategoryCreateSerializer
+    SubTaskCreateSerializer, CategoryCreateSerializer, CategorySerializer
 )
+
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 class TaskFilter(filters.FilterSet):
     deadline_after = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
@@ -113,10 +117,14 @@ class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.select_related("task").all()
     serializer_class = SubTaskCreateSerializer
 
-class CategoryListCreateView(ListCreateAPIView):
-    queryset = Category.objects.all().order_by("name")
-    serializer_class = CategoryCreateSerializer
 
-class CategoryDetailUpdateView(RetrieveUpdateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategoryCreateSerializer
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all().order_by("name")
+    serializer_class = CategorySerializer
+
+    @action(detail=True, methods=["get"])
+    def count_tasks(self, request, pk=None):
+        category = self.get_object()
+        count = Task.objects.filter(categories=category).count()
+        return Response({"category_id": category.pk, "tasks": count})
