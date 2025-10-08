@@ -1,47 +1,67 @@
 from django.utils import timezone
 from django.db.models import Count, Q
 from django.db.models.functions import ExtractIsoWeekDay
-import django_filters.rest_framework as filters
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.filters import SearchFilter, OrderingFilter
+import django_filters.rest_framework as dj_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+
+from rest_framework import permissions, viewsets, decorators, response
+from rest_framework import filters as drf_filters
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+    ListAPIView,
+)
+from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from .models import Task, SubTask, Category, Status
 from .serializers import (
-    TaskCreateSerializer, TaskListSerializer, TaskDetailSerializer,
-    SubTaskCreateSerializer, CategorySerializer
+    TaskCreateSerializer,
+    TaskListSerializer,
+    TaskDetailSerializer,
+    SubTaskCreateSerializer,
+    CategorySerializer,
+    TaskSerializer,
+    SubTaskSerializer,
 )
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
-class TaskFilter(filters.FilterSet):
-    deadline_after = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
-    deadline_before = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="lte")
+class TaskFilter(dj_filters.FilterSet):
+    deadline_after = dj_filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
+    deadline_before = dj_filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="lte")
 
     class Meta:
         model = Task
         fields = ["status"]
 
-class SubTaskFilter(filters.FilterSet):
-    deadline_after = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
-    deadline_before = filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="lte")
+
+class SubTaskFilter(dj_filters.FilterSet):
+    deadline_after = dj_filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
+    deadline_before = dj_filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="lte")
 
     class Meta:
         model = SubTask
         fields = ["status"]
 
+
 class TaskListCreateView(ListCreateAPIView):
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    filter_backends = [DjangoFilterBackend, drf_filters.SearchFilter, drf_filters.OrderingFilter]
     filterset_class = TaskFilter
     search_fields = ["title", "description"]
-    ordering_fields = ["created_at"]
+    ordering_fields = ["created_at", "deadline"]
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = Task.objects.all().order_by("-created_at")
+        qs = (
+            Task.objects.select_related("owner")
+            .prefetch_related("categories")
+            .all()
+            .order_by("-created_at")
+        )
 
         weekday = self.request.query_params.get("weekday")
         if weekday:
@@ -61,21 +81,23 @@ class TaskListCreateView(ListCreateAPIView):
         return qs
 
     def get_serializer_class(self):
-        if self.request.method.upper() == "POST":
-            return TaskCreateSerializer
-        return TaskListSerializer
+        return TaskCreateSerializer if self.request.method.upper() == "POST" else TaskListSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class TaskRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    queryset = Task.objects.all().prefetch_related("subtasks", "categories")
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    queryset = Task.objects.select_related("owner").prefetch_related("subtasks", "categories")
 
     def get_serializer_class(self):
-        if self.request.method.upper() == "GET":
-            return TaskDetailSerializer
-        return TaskCreateSerializer
+        return TaskDetailSerializer if self.request.method.upper() == "GET" else TaskCreateSerializer
 
-class TaskStatsView(APIView):
-    def get(self, request):
+
+class TaskStatsView(ListAPIView):
+
+    def get(self, request, *args, **kwargs):
         total = Task.objects.count()
         rows = Task.objects.values("status").annotate(count=Count("id"))
         by_status = {r["status"]: r["count"] for r in rows}
@@ -84,36 +106,97 @@ class TaskStatsView(APIView):
         ).count()
         return Response({"total": total, "by_status": by_status, "overdue": overdue})
 
+
 class SubTaskListCreateView(ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = SubTaskCreateSerializer
 
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, drf_filters.SearchFilter, drf_filters.OrderingFilter]
     filterset_class = SubTaskFilter
     search_fields = ["title", "description"]
-    ordering_fields = ["created_at"]
+    ordering_fields = ["created_at", "deadline"]
     ordering = ["-created_at"]
 
     def get_queryset(self):
-        qs = SubTask.objects.select_related("task").all().order_by("-created_at")
-
+        qs = SubTask.objects.select_related("task", "owner").all().order_by("-created_at")
         task_title = self.request.query_params.get("task_title")
         if task_title:
             qs = qs.filter(task__title__icontains=task_title.strip())
         return qs
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class SubTaskDetailUpdateDeleteView(RetrieveUpdateDestroyAPIView):
-    queryset = SubTask.objects.select_related("task").all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    queryset = SubTask.objects.select_related("task", "owner").all()
     serializer_class = SubTaskCreateSerializer
 
+
+class MyTasksView(ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = TaskListSerializer
+
+    def get_queryset(self):
+        return Task.objects.filter(owner=self.request.user).order_by("-created_at")
+
+
+class MySubTasksView(ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SubTaskSerializer
+
+    def get_queryset(self):
+        return SubTask.objects.filter(owner=self.request.user).order_by("-created_at")
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by("name")
     serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=True, methods=["get"])
     def count_tasks(self, request, pk=None):
         category = self.get_object()
         count = Task.objects.filter(categories=category).count()
         return Response({"category_id": category.pk, "tasks": count})
+
+
+class TaskViewSet(viewsets.ModelViewSet):
+    queryset = Task.objects.all().order_by("-id")
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    filter_backends = [drf_filters.OrderingFilter]
+    ordering_fields = ["id", "deadline"]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    def my(self, request):
+        qs = self.get_queryset().filter(owner=request.user)
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            ser = self.get_serializer(page, many=True)
+            return self.get_paginated_response(ser.data)
+        ser = self.get_serializer(qs, many=True)
+        return Response(ser.data)
+
+class SubTaskViewSet(viewsets.ModelViewSet):
+    queryset = SubTask.objects.select_related("task").all().order_by("-id")
+    serializer_class = SubTaskSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    filter_backends = [drf_filters.OrderingFilter]
+    ordering_fields = ["id", "deadline"]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    @decorators.action(detail=False, methods=["get"], url_path="my", permission_classes=[permissions.IsAuthenticated])
+    def my(self, request):
+        qs = self.get_queryset().filter(owner=request.user)
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            data = self.get_serializer(page, many=True).data
+            return self.get_paginated_response(data)
+        return response.Response(self.get_serializer(qs, many=True).data)

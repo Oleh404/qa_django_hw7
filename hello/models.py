@@ -2,7 +2,9 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class Status(models.TextChoices):
     NEW = "new", "New"
@@ -52,6 +54,8 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    pass
+
 
 class Task(models.Model):
     title = models.CharField("Название", max_length=200, unique=True)
@@ -67,12 +71,17 @@ class Task(models.Model):
     )
     deadline = models.DateTimeField("Дедлайн", null=True, blank=True)
     created_at = models.DateTimeField("Создано", auto_now_add=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name="tasks",
+        null=True, blank=True,
+    )
 
     class Meta:
         db_table = "task_manager_task"
         verbose_name = "Задача"
         verbose_name_plural = "Задачи"
-        ordering = ["-created_at"]
+        ordering = ["-id"]
 
     def __str__(self):
         return self.title
@@ -90,11 +99,17 @@ class SubTask(models.Model):
     deadline = models.DateTimeField("Дедлайн", null=True, blank=True)
     created_at = models.DateTimeField("Создано", auto_now_add=True)
 
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name="subtasks",
+        null=True, blank=True,
+    )
+
     class Meta:
         db_table = "task_manager_subtask"
         verbose_name = "Подзадача"
         verbose_name_plural = "Подзадачи"
-        ordering = ["-created_at"]
+        ordering = ["-id"]
 
     def __str__(self):
-        return self.title
+        return f"{self.task_id}: {self.title}"

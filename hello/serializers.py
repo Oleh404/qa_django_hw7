@@ -11,6 +11,7 @@ class SubTaskCreateSerializer(serializers.ModelSerializer):
 
 
 class SubTaskSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source="owner.username")
     class Meta:
         model = SubTask
         fields = ["id", "title", "description", "status", "deadline", "created_at"]
@@ -58,6 +59,7 @@ class TaskCreateSerializer(serializers.ModelSerializer):
 class TaskDetailSerializer(serializers.ModelSerializer):
     subtasks = SubTaskSerializer(many=True, read_only=True)
     categories = serializers.StringRelatedField(many=True)
+    owner = serializers.ReadOnlyField(source="owner.username")
 
     class Meta:
         model = Task

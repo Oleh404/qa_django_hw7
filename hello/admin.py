@@ -11,7 +11,7 @@ class SubTaskInline(admin.TabularInline):
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ("id", "short_title", "status", "deadline", "created_at")
+    list_display = ("id", "short_title", "status", "deadline", "created_at", "owner")
     list_filter = ("status", "deadline", "created_at", "categories")
     search_fields = ("title", "description")
     ordering = ("-created_at",)
@@ -33,7 +33,7 @@ def make_subtasks_done(modeladmin, request, queryset):
 
 @admin.register(SubTask)
 class SubTaskAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "status", "deadline", "task")
+    list_display = ("id", "title", "status", "deadline", "task", "owner")
     list_filter = ("status", "deadline", "task")
     search_fields = ("title", "description", "task__title")
     actions = [make_subtasks_done]

@@ -8,6 +8,8 @@ from .api import (
     SubTaskListCreateView,
     SubTaskDetailUpdateDeleteView,
     CategoryViewSet,
+    TaskViewSet,
+    SubTaskViewSet,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView, TokenVerifyView
@@ -15,6 +17,8 @@ from rest_framework_simplejwt.views import (
 
 router = DefaultRouter()
 router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r"tasks", TaskViewSet, basename="task")
+router.register(r"subtasks", SubTaskViewSet, basename="subtask")
 
 urlpatterns = [
     path("api/tasks/", TaskListCreateView.as_view(), name="task-list"),

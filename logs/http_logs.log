@@ -225,3 +225,121 @@
 08/Oct/2025 16:36:49,077 GET /api/subtasks/?page=2 -> 127.0.0.1 404 4.17ms
 08/Oct/2025 16:36:49,077 Not Found: /api/subtasks/
 08/Oct/2025 16:36:49 "GET /api/subtasks/?page=2 HTTP/1.1" 404 47
+08/Oct/2025 17:50:56,104 POST /api/token/ -> 127.0.0.1 200 802.34ms
+08/Oct/2025 17:50:56 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 17:55:46,737 POST /api/token/refresh/ -> 127.0.0.1 200 4.43ms
+08/Oct/2025 17:55:46 "POST /api/token/refresh/ HTTP/1.1" 200 244
+08/Oct/2025 17:58:14,354 POST /api/tasks/ -> 127.0.0.1 401 0.70ms
+08/Oct/2025 17:58:14,354 Unauthorized: /api/tasks/
+08/Oct/2025 17:58:14 "POST /api/tasks/ HTTP/1.1" 401 96
+08/Oct/2025 18:02:32,220 POST /api/token/ -> 127.0.0.1 200 791.38ms
+08/Oct/2025 18:02:32 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:04:02,640 POST /api/tasks/ -> 127.0.0.1 201 32.75ms
+08/Oct/2025 18:04:02 "POST /api/tasks/ HTTP/1.1" 201 162
+08/Oct/2025 18:05:28,149 GET /api/tasks/my/ -> 127.0.0.1 404 12.78ms
+08/Oct/2025 18:05:28,151 Not Found: /api/tasks/my/
+08/Oct/2025 18:05:28 "GET /api/tasks/my/ HTTP/1.1" 404 8064
+08/Oct/2025 18:13:50,587 GET /api/tasks/my/ -> 127.0.0.1 401 20.31ms
+08/Oct/2025 18:13:50,588 Unauthorized: /api/tasks/my/
+08/Oct/2025 18:13:50 "GET /api/tasks/my/ HTTP/1.1" 401 172
+08/Oct/2025 18:17:01,289 GET /api/token/ -> 127.0.0.1 405 1.10ms
+08/Oct/2025 18:17:01,291 Method Not Allowed: /api/token/
+08/Oct/2025 18:17:01 "GET /api/token/ HTTP/1.1" 405 58
+08/Oct/2025 18:17:08,062 POST /api/token/ -> 127.0.0.1 200 797.21ms
+08/Oct/2025 18:17:08 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:17:40,159 GET /api/tasks/my/ -> 127.0.0.1 200 18.25ms
+08/Oct/2025 18:17:40 "GET /api/tasks/my/ HTTP/1.1" 200 214
+08/Oct/2025 18:18:32,784 POST /api/subtasks/ -> 127.0.0.1 401 0.39ms
+08/Oct/2025 18:18:32,784 Unauthorized: /api/subtasks/
+08/Oct/2025 18:18:32 "POST /api/subtasks/ HTTP/1.1" 401 172
+08/Oct/2025 18:18:52,493 POST /api/token/ -> 127.0.0.1 200 876.93ms
+08/Oct/2025 18:18:52 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:19:23,123 POST /api/subtasks/ -> 127.0.0.1 201 13.36ms
+08/Oct/2025 18:19:23 "POST /api/subtasks/ HTTP/1.1" 201 159
+08/Oct/2025 18:20:26,032 GET / -> 127.0.0.1 404 5.55ms
+08/Oct/2025 18:20:26,033 Not Found: /
+08/Oct/2025 18:20:26 "GET / HTTP/1.1" 404 5136
+08/Oct/2025 18:20:26,806 GET /favicon.ico -> 127.0.0.1 404 3.86ms
+08/Oct/2025 18:20:26,811 Not Found: /favicon.ico
+08/Oct/2025 18:20:26 "GET /favicon.ico HTTP/1.1" 404 5187
+08/Oct/2025 18:20:42,754 GET /admin/ -> 127.0.0.1 302 16.01ms
+08/Oct/2025 18:20:42 "GET /admin/ HTTP/1.1" 302 0
+08/Oct/2025 18:20:42,887 GET /admin/login/?next=/admin/ -> 127.0.0.1 200 129.13ms
+08/Oct/2025 18:20:42 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4405
+08/Oct/2025 18:20:42 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:42 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:42 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:42 "GET /static/admin/css/login.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:42 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:42 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+08/Oct/2025 18:20:43 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+08/Oct/2025 18:20:52,860 POST /admin/login/?next=/admin/ -> 127.0.0.1 302 798.86ms
+08/Oct/2025 18:20:52 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+08/Oct/2025 18:20:52,905 GET /admin/ -> 127.0.0.1 200 29.04ms
+08/Oct/2025 18:20:52 "GET /admin/ HTTP/1.1" 200 9179
+08/Oct/2025 18:20:52 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+08/Oct/2025 18:20:53 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+08/Oct/2025 18:20:53 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+08/Oct/2025 18:20:56,095 GET /admin/login/?next=/admin/ -> 127.0.0.1 302 4.84ms
+08/Oct/2025 18:20:56 "GET /admin/login/?next=/admin/ HTTP/1.1" 302 0
+08/Oct/2025 18:20:56,110 GET /admin/ -> 127.0.0.1 200 9.60ms
+08/Oct/2025 18:20:56 "GET /admin/ HTTP/1.1" 200 9179
+08/Oct/2025 18:20:58,048 POST /admin/logout/ -> 127.0.0.1 200 20.99ms
+08/Oct/2025 18:20:58 "POST /admin/logout/ HTTP/1.1" 200 3838
+08/Oct/2025 18:21:01,520 GET /admin/ -> 127.0.0.1 302 0.39ms
+08/Oct/2025 18:21:01 "GET /admin/ HTTP/1.1" 302 0
+08/Oct/2025 18:21:01,530 GET /admin/login/?next=/admin/ -> 127.0.0.1 200 4.93ms
+08/Oct/2025 18:21:01 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4405
+08/Oct/2025 18:21:10,159 POST /admin/login/?next=/admin/ -> 127.0.0.1 302 821.23ms
+08/Oct/2025 18:21:10 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+08/Oct/2025 18:21:10,180 GET /admin/ -> 127.0.0.1 200 9.03ms
+08/Oct/2025 18:21:10 "GET /admin/ HTTP/1.1" 200 8778
+08/Oct/2025 18:21:49,769 POST /api/token/ -> 127.0.0.1 200 795.59ms
+08/Oct/2025 18:21:49 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:22:23,661 PATCH /api/tasks/0/ -> 127.0.0.1 404 3.29ms
+08/Oct/2025 18:22:23,661 Not Found: /api/tasks/0/
+08/Oct/2025 18:22:23 "PATCH /api/tasks/0/ HTTP/1.1" 404 45
+08/Oct/2025 18:22:47,731 PATCH /api/tasks/1/ -> 127.0.0.1 401 0.37ms
+08/Oct/2025 18:22:47,731 Unauthorized: /api/tasks/1/
+08/Oct/2025 18:22:47 "PATCH /api/tasks/1/ HTTP/1.1" 401 172
+08/Oct/2025 18:25:49,606 POST /api/token/ -> 127.0.0.1 200 786.06ms
+08/Oct/2025 18:25:49 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:26:12,901 PATCH /api/tasks/1/ -> 127.0.0.1 404 3.35ms
+08/Oct/2025 18:26:12,902 Not Found: /api/tasks/1/
+08/Oct/2025 18:26:12 "PATCH /api/tasks/1/ HTTP/1.1" 404 45
+08/Oct/2025 18:26:32,973 DELETE /api/tasks/1/ -> 127.0.0.1 401 0.48ms
+08/Oct/2025 18:26:32,973 Unauthorized: /api/tasks/1/
+08/Oct/2025 18:26:32 "DELETE /api/tasks/1/ HTTP/1.1" 401 172
+08/Oct/2025 18:27:10,497 DELETE /api/token/ -> 127.0.0.1 405 0.58ms
+08/Oct/2025 18:27:10,498 Method Not Allowed: /api/token/
+08/Oct/2025 18:27:10 "DELETE /api/token/ HTTP/1.1" 405 61
+08/Oct/2025 18:27:34,760 GET /api/tasks/?page=1 -> 127.0.0.1 401 0.38ms
+08/Oct/2025 18:27:34,760 Unauthorized: /api/tasks/
+08/Oct/2025 18:27:34 "GET /api/tasks/?page=1 HTTP/1.1" 401 172
+08/Oct/2025 18:28:11,573 GET /api/token/ -> 127.0.0.1 405 0.30ms
+08/Oct/2025 18:28:11,573 Method Not Allowed: /api/token/
+08/Oct/2025 18:28:11 "GET /api/token/ HTTP/1.1" 405 58
+08/Oct/2025 18:28:17,105 POST /api/token/ -> 127.0.0.1 200 777.80ms
+08/Oct/2025 18:28:17 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:29:15,124 GET /api/tasks/?page=1 -> 127.0.0.1 401 0.38ms
+08/Oct/2025 18:29:15,124 Unauthorized: /api/tasks/
+08/Oct/2025 18:29:15 "GET /api/tasks/?page=1 HTTP/1.1" 401 96
+08/Oct/2025 18:30:06,422 GET /api/token/ -> 127.0.0.1 405 0.44ms
+08/Oct/2025 18:30:06,422 Method Not Allowed: /api/token/
+08/Oct/2025 18:30:06 "GET /api/token/ HTTP/1.1" 405 58
+08/Oct/2025 18:30:10,804 POST /api/token/ -> 127.0.0.1 200 784.62ms
+08/Oct/2025 18:30:10 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:30:53,767 GET /api/tasks/?page=1 -> 127.0.0.1 200 8.36ms
+08/Oct/2025 18:30:53 "GET /api/tasks/?page=1 HTTP/1.1" 200 874
+08/Oct/2025 18:31:31,438 GET /api/tasks/my/?page=1 -> 127.0.0.1 401 0.45ms
+08/Oct/2025 18:31:31,438 Unauthorized: /api/tasks/my/
+08/Oct/2025 18:31:31 "GET /api/tasks/my/?page=1 HTTP/1.1" 401 172
+08/Oct/2025 18:31:58,486 POST /api/token/ -> 127.0.0.1 200 804.09ms
+08/Oct/2025 18:31:58 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:32:09,704 GET /api/tasks/my/?page=2 -> 127.0.0.1 404 3.91ms
+08/Oct/2025 18:32:09,704 Not Found: /api/tasks/my/
+08/Oct/2025 18:32:09 "GET /api/tasks/my/?page=2 HTTP/1.1" 404 47
+08/Oct/2025 18:32:26,720 POST /api/token/ -> 127.0.0.1 200 803.23ms
+08/Oct/2025 18:32:26 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 18:32:31,004 GET /api/tasks/?page=2 -> 127.0.0.1 200 7.18ms
+08/Oct/2025 18:32:31 "GET /api/tasks/?page=2 HTTP/1.1" 200 209
