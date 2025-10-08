@@ -1,7 +1,8 @@
 from django.utils import timezone
 from rest_framework import serializers
 from .models import Task, SubTask, Category
-
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 
 class SubTaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -97,3 +98,37 @@ class CategorySerializer(serializers.ModelSerializer):
         if qs.filter(is_deleted=False).exists():
             raise serializers.ValidationError("Category with this name already exists.")
         return value
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, trim_whitespace=False)
+    password2 = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "first_name", "last_name", "password", "password2")
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("Користувач з таким email вже існує.")
+        return value
+
+    def validate(self, attrs):
+        if attrs.get("password") != attrs.get("password2"):
+            raise serializers.ValidationError({"password2": "Паролі не співпадають."})
+        validate_password(attrs["password"])
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop("password2")
+        password = validated_data.pop("password")
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "first_name", "last_name")

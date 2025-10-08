@@ -5,7 +5,7 @@ from django.db.models.functions import ExtractIsoWeekDay
 import django_filters.rest_framework as dj_filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import permissions, viewsets, decorators, response
+from rest_framework import permissions, viewsets, decorators, response, status, generics
 from rest_framework import filters as drf_filters
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -26,7 +26,15 @@ from .serializers import (
     SubTaskSerializer,
 )
 from .permissions import IsOwnerOrReadOnly
-from rest_framework.permissions import IsAuthenticated
+from django.conf import settings
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import RegisterSerializer, UserSerializer
+
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 class TaskFilter(dj_filters.FilterSet):
     deadline_after = dj_filters.IsoDateTimeFilter(field_name="deadline", lookup_expr="gte")
@@ -200,3 +208,62 @@ class SubTaskViewSet(viewsets.ModelViewSet):
             data = self.get_serializer(page, many=True).data
             return self.get_paginated_response(data)
         return response.Response(self.get_serializer(qs, many=True).data)
+
+
+class RegisterView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = RegisterSerializer
+
+
+class LoginView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200 and isinstance(response.data, dict):
+            access = response.data.get("access")
+            refresh = response.data.get("refresh")
+
+            if refresh:
+                response.set_cookie(
+                    key="refresh",
+                    value=refresh,
+                    httponly=True,
+                    samesite="Lax",
+                    secure=False,
+                    max_age=int(settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()),
+                )
+            if access:
+                response.set_cookie(
+                    key="access",
+                    value=access,
+                    httponly=True,
+                    samesite="Lax",
+                    secure=False,
+                    max_age=int(settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].total_seconds()),
+                )
+        return response
+
+
+class LogoutView(generics.GenericAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh = request.data.get("refresh")
+        if not refresh:
+            return Response({"detail": "Missing refresh token"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            token = RefreshToken(refresh)
+            token.blacklist()
+            return Response({"detail": "Logged out"}, status=status.HTTP_205_RESET_CONTENT)
+        except TokenError:
+            return Response({"detail": "Already invalidated"}, status=status.HTTP_200_OK)
+
+
+class MeView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
