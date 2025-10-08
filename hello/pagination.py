@@ -6,3 +6,7 @@ class DefaultCursorPagination(CursorPagination):
     ordering = '-created_at'
 
 
+class CursorSetPagination(CursorPagination):
+    page_size = 5
+    cursor_query_param = "cursor"
+    ordering = "-created_at"
