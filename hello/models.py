@@ -1,10 +1,6 @@
+# hello/models.py
 from django.db import models
-from django.db.models import Q
-from django.db.models.functions import Lower
-from django.utils import timezone
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
 
 class Status(models.TextChoices):
     NEW = "new", "New"
@@ -14,102 +10,71 @@ class Status(models.TextChoices):
     DONE = "done", "Done"
 
 
-class CategoryQuerySet(models.QuerySet):
-    def alive(self):
-        return self.filter(is_deleted=False)
-
-
-class CategoryManager(models.Manager):
-    def get_queryset(self):
-        return CategoryQuerySet(self.model, using=self._db).alive()
-
-
 class Category(models.Model):
-    name = models.CharField("Название", max_length=100)
-    is_deleted = models.BooleanField(default=False)
-    deleted_at = models.DateTimeField(null=True, blank=True)
-
-    objects = CategoryManager()
-    all_objects = models.Manager()
+    name = models.CharField("Название", max_length=100, unique=True)
 
     class Meta:
-        db_table = "task_manager_category"
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
         ordering = ["name"]
-        constraints = [
-            models.UniqueConstraint(
-                Lower("name"),
-                condition=Q(is_deleted=False),
-                name="uniq_category_name_ci_not_deleted",
-            )
-        ]
 
-    def delete(self, using=None, keep_parents=False):
-        if not self.is_deleted:
-            self.is_deleted = True
-            self.deleted_at = timezone.now()
-            self.save(update_fields=["is_deleted", "deleted_at"])
-
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
-
-    pass
 
 
 class Task(models.Model):
-    title = models.CharField("Название", max_length=200, unique=True)
+    title = models.CharField(
+        "Название",
+        max_length=200,
+        unique_for_date="created_at",
+    )
     description = models.TextField("Описание", blank=True)
     categories = models.ManyToManyField(
-        "Category",
-        blank=True,
-        related_name="tasks",
+        Category,
         verbose_name="Категории",
+        related_name="tasks",
+        blank=True,
     )
     status = models.CharField(
-        "Статус", max_length=20, choices=Status.choices, default=Status.NEW
+        "Статус",
+        max_length=20,
+        choices=Status.choices,
+        default=Status.NEW,
     )
     deadline = models.DateTimeField("Дедлайн", null=True, blank=True)
     created_at = models.DateTimeField("Создано", auto_now_add=True)
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="tasks",
-        null=True, blank=True,
-    )
 
     class Meta:
-        db_table = "task_manager_task"
         verbose_name = "Задача"
         verbose_name_plural = "Задачи"
-        ordering = ["-id"]
+        ordering = ["-created_at", "title"]
 
-    def __str__(self):
-        return self.title
+    def __str__(self) -> str:
+        return f"{self.title} [{self.get_status_display()}]"
 
 
 class SubTask(models.Model):
-    title = models.CharField("Название подзадачи", max_length=200, unique=True)
+    title = models.CharField("Название подзадачи", max_length=200)
     description = models.TextField("Описание подзадачи", blank=True)
     task = models.ForeignKey(
-        "Task", on_delete=models.CASCADE, related_name="subtasks", verbose_name="Основная задача"
+        Task,
+        verbose_name="Основная задача",
+        related_name="subtasks",
+        on_delete=models.CASCADE,
     )
     status = models.CharField(
-        "Статус", max_length=20, choices=Status.choices, default=Status.NEW
+        "Статус",
+        max_length=20,
+        choices=Status.choices,
+        default=Status.NEW,
     )
     deadline = models.DateTimeField("Дедлайн", null=True, blank=True)
     created_at = models.DateTimeField("Создано", auto_now_add=True)
 
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE,
-        related_name="subtasks",
-        null=True, blank=True,
-    )
-
     class Meta:
-        db_table = "task_manager_subtask"
         verbose_name = "Подзадача"
         verbose_name_plural = "Подзадачи"
-        ordering = ["-id"]
+        ordering = ["-created_at", "title"]
 
-    def __str__(self):
-        return f"{self.task_id}: {self.title}"
+    def __str__(self) -> str:
+        return f"{self.title} → {self.task.title}"
