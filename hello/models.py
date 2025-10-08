@@ -1,4 +1,3 @@
-# hello/models.py
 from django.db import models
 
 
@@ -14,8 +13,9 @@ class Category(models.Model):
     name = models.CharField("Название", max_length=100, unique=True)
 
     class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
+        db_table = "task_manager_category"
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
         ordering = ["name"]
 
     def __str__(self) -> str:
@@ -23,11 +23,7 @@ class Category(models.Model):
 
 
 class Task(models.Model):
-    title = models.CharField(
-        "Название",
-        max_length=200,
-        unique_for_date="created_at",
-    )
+    title = models.CharField("Название", max_length=200, unique=True)
     description = models.TextField("Описание", blank=True)
     categories = models.ManyToManyField(
         Category,
@@ -45,16 +41,17 @@ class Task(models.Model):
     created_at = models.DateTimeField("Создано", auto_now_add=True)
 
     class Meta:
-        verbose_name = "Задача"
-        verbose_name_plural = "Задачи"
-        ordering = ["-created_at", "title"]
+        db_table = "task_manager_task"
+        verbose_name = "Task"
+        verbose_name_plural = "Tasks"
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"{self.title} [{self.get_status_display()}]"
+        return self.title
 
 
 class SubTask(models.Model):
-    title = models.CharField("Название подзадачи", max_length=200)
+    title = models.CharField("Название подзадачи", max_length=200, unique=True)
     description = models.TextField("Описание подзадачи", blank=True)
     task = models.ForeignKey(
         Task,
@@ -72,9 +69,10 @@ class SubTask(models.Model):
     created_at = models.DateTimeField("Создано", auto_now_add=True)
 
     class Meta:
-        verbose_name = "Подзадача"
-        verbose_name_plural = "Подзадачи"
-        ordering = ["-created_at", "title"]
+        db_table = "task_manager_subtask"
+        verbose_name = "SubTask"
+        verbose_name_plural = "SubTasks"
+        ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"{self.title} → {self.task.title}"
+        return self.title

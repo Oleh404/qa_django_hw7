@@ -22,6 +22,7 @@ class TaskAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
     date_hierarchy = "created_at"
     filter_horizontal = ("categories",)
+    readonly_fields = ("created_at",)
     inlines = [SubTaskInline]
 
 
@@ -31,3 +32,4 @@ class SubTaskAdmin(admin.ModelAdmin):
     list_filter = ("status", "created_at", "task")
     search_fields = ("title", "description", "task__title")
     autocomplete_fields = ("task",)
+    readonly_fields = ("created_at",)
