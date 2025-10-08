@@ -74,14 +74,16 @@ class TaskListSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
     categories = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(), many=True, required=False
     )
 
     class Meta:
         model = Task
-        fields = ["id", "title", "description", "status", "deadline", "created_at", "categories"]
-        read_only_fields = ["id", "created_at"]
+        fields = ["id", "title", "description", "status", "deadline",
+                  "created_at", "owner", "categories"]
+        read_only_fields = ("id", "created_at", "owner")
 
 
 class CategorySerializer(serializers.ModelSerializer):

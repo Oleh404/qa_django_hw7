@@ -488,3 +488,13 @@ django.db.utils.OperationalError: no such table: token_blacklist_outstandingtoke
 08/Oct/2025 20:12:33,482 POST /api/token/refresh/ -> 127.0.0.1 401 4.32ms
 08/Oct/2025 20:12:33,482 Unauthorized: /api/token/refresh/
 08/Oct/2025 20:12:33 "POST /api/token/refresh/ HTTP/1.1" 401 96
+08/Oct/2025 20:41:56,650 POST /api/token/ -> 127.0.0.1 200 806.21ms
+08/Oct/2025 20:41:56 "POST /api/token/ HTTP/1.1" 200 489
+08/Oct/2025 20:42:03,989 POST /api/tasks/ -> 127.0.0.1 201 25.80ms
+08/Oct/2025 20:42:03 "POST /api/tasks/ HTTP/1.1" 201 171
+08/Oct/2025 20:42:13,148 PATCH /api/tasks/17/ -> 127.0.0.1 200 14.56ms
+08/Oct/2025 20:42:13 "PATCH /api/tasks/17/ HTTP/1.1" 200 171
+08/Oct/2025 20:42:23,929 PATCH /api/tasks/17/ -> 127.0.0.1 200 4569.86ms
+08/Oct/2025 20:42:23 "PATCH /api/tasks/17/ HTTP/1.1" 200 179
+08/Oct/2025 20:42:31,889 PATCH /api/tasks/17/ -> 127.0.0.1 200 15.33ms
+08/Oct/2025 20:42:31 "PATCH /api/tasks/17/ HTTP/1.1" 200 172
